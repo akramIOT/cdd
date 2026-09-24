@@ -1,0 +1,12 @@
+# Core dependencies. Prefer: pip install -e ".[judge,diagnose]"
+torch>=2.3.0
+transformers>=4.47.0
+accelerate>=0.34.0
+peft>=0.10.0
+huggingface_hub>=0.24.0
+numpy>=1.26.0
+tqdm
+
+# pip install anthropic          # closed-set judge and investigator
+# pip install openai matplotlib  # diagnose
+# pip install flash-attn --no-build-isolation
