@@ -3,7 +3,7 @@ import math
 import torch
 
 from cdd.auditors import layer_screen, log_ratio_profile, reference_mode_split
-from cdd.decoding import sensitivity_grid
+from cdd.decoding import gated_choice, sensitivity_grid
 
 
 def _toy_logits():
@@ -47,6 +47,15 @@ def test_sensitivity_grid_on_the_constructed_step():
     assert chosen[(1.0, 2)] == 0
     assert chosen[(8.0, 4)] == 2
     assert chosen[(8.0, 2)] == 0
+
+
+def test_crossing_threshold_on_the_constructed_step():
+    threshold = -math.log(0.3) / math.log(1.2)
+    assert math.isclose(threshold, 6.6035680338478695)
+    trained, reference = _toy_logits()
+    assert gated_choice(trained, reference, threshold, 4) == 0
+    assert gated_choice(trained, reference, 6.604, 4) == 2
+    assert gated_choice(trained, reference, 8.0, 2) == 0
 
 
 def test_reference_mode_split_labels():

@@ -225,7 +225,7 @@ Gated index:
 | 8 | 1 or 2 | 0 |
 | 8 | 4 | 2 |
 
-Index `2` is selected only when the gate includes it and `α` is large enough for its log-ratio to outrank token `a`.
+Index `2` is selected only when the gate includes it and `α` is large enough for its log-ratio to outrank token `a`. Inside a gate that contains both, token `c` outranks token `a` exactly when `α > -log(0.3)/log(1.2) = 6.603568`. At that quotient the scores tie and the index is `0`. At `α = 6.604` the index is `2`. At `k = 2` token `c` is masked, so the index stays `0` for every `α ≥ 0`.
 
 Reference-mode labels at threshold `0.05`: gaps `(0.0514, 0.01)` → `weight`; `(0.01, 0.0965)` → `prompt`; `(0.0965, 0.0965)` → `both`; `(0.01, 0.01)` → `neither`.
 
