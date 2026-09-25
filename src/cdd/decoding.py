@@ -35,6 +35,36 @@ def contrastive_score(
     return score, trained_log_probs
 
 
+def gated_choice(trained_logits: torch.Tensor, reference_logits: torch.Tensor, alpha: float, top_k: int) -> int:
+    """Vocabulary index selected by one greedy contrastive step."""
+    if trained_logits.ndim == 1:
+        trained_logits = trained_logits.unsqueeze(0)
+        reference_logits = reference_logits.unsqueeze(0)
+    score, trained_log_probs = contrastive_score(trained_logits, reference_logits, alpha)
+    gated = apply_top_k_gate(score, trained_log_probs, top_k)
+    return int(gated.argmax(dim=-1).item())
+
+
+def sensitivity_grid(
+    trained_logits: torch.Tensor,
+    reference_logits: torch.Tensor,
+    alphas: list[float],
+    top_ks: list[int],
+) -> list[dict[str, float | int]]:
+    """Chosen index for each (alpha, top-k) pair. No model weights are loaded."""
+    rows = []
+    for alpha in alphas:
+        for top_k in top_ks:
+            rows.append(
+                {
+                    "alpha": alpha,
+                    "top_k": top_k,
+                    "index": gated_choice(trained_logits, reference_logits, alpha, top_k),
+                }
+            )
+    return rows
+
+
 def apply_top_k_gate(score: torch.Tensor, trained_log_probs: torch.Tensor, top_k: int) -> torch.Tensor:
     if top_k <= 0:
         return score

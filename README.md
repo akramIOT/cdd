@@ -12,6 +12,8 @@ Audit fine-tuned language models for hidden behaviors by comparing a fine-tuned 
 
 The organism registry has 56 LoRA models: 14 implanted behaviors and two training regimes (transcript distillation and synthetic-document fine-tuning).
 
+The auditor contract is [AUDITOR_SPEC.md](AUDITOR_SPEC.md). It states the formulas, defaults, and fixture outputs. `PYTHONPATH=src python -m pytest tests` is the conformance check. Passing it does not measure audit accuracy on a fine-tuned model.
+
 ## Methods
 
 Contrastive decoding scores each vocabulary token as

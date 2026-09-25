@@ -3,6 +3,7 @@ import math
 import torch
 
 from cdd.auditors import layer_screen, log_ratio_profile, reference_mode_split
+from cdd.decoding import sensitivity_grid
 
 
 def _toy_logits():
@@ -35,6 +36,17 @@ def test_layer_screen_flags_the_constructed_adapter_only():
     broad = screen["rows"][0]
     assert broad["stable_rank"] == 4.0
     assert broad["flagged"] is False
+
+
+def test_sensitivity_grid_on_the_constructed_step():
+    trained, reference = _toy_logits()
+    rows = sensitivity_grid(trained, reference, alphas=[0.0, 1.0, 8.0], top_ks=[1, 2, 4])
+    chosen = {(row["alpha"], row["top_k"]): row["index"] for row in rows}
+    assert chosen[(0.0, 1)] == 0
+    assert chosen[(1.0, 1)] == 0
+    assert chosen[(1.0, 2)] == 0
+    assert chosen[(8.0, 4)] == 2
+    assert chosen[(8.0, 2)] == 0
 
 
 def test_reference_mode_split_labels():
